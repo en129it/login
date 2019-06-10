@@ -1,0 +1,33 @@
+<div>
+        <div class="wizard-header-container">
+            <div class="progressbar-container">
+                <div class="progressbar-footprint">
+                    <div class="progressbar" [style.width.%]="progressBarWidthPercentage"></div>
+                </div>
+            </div>
+            <div class="step-container">
+                <div *ngFor="let step of stepsData; let i=index" class="step" [class.done]="isStepDone(i)" [class.active]="isStepActive(i)">
+                    <button class="step-point" [class.accessible]="isStepAccessible(i)" (click)="goToStep(i)">
+                        <span *ngIf="!isStepDone(i)" class="step-number">{{i+1}}</span>
+                        <div *ngIf="isStepDone(i)" class="step-done"></div>
+                    </button>
+                    <div class="step-label">{{step.stepLabelKey}}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="wizard-content-container">
+            <ng-container #content></ng-container>
+        </div>
+
+        <div class="button-container">
+                <div class="navig-button" *ngIf="currentStepIndex > 0 && currentStepIndex < stepsData.length">
+                    <button [disabled]="isButtonDisabled" (click)="goPreviousStep()">{{getPreviousButtonLabel()}}</button>
+                </div>
+                <div class="navig-button" *ngIf="currentStepIndex < stepsData.length">
+                    <button [disabled]="isButtonDisabled" (click)="goNextStep()">{{getNextButtonLabel()}}</button>
+                </div>
+            </div>
+        <div style="clear: both;"></div>
+        
+</div>
