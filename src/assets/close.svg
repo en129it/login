@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-500 -500 1000 1000">
+    <path d="M 20 -500 h 20 v 480 h 480 v 40 h -480 v 480 h -40 v -480 h -480 v -40 h 480 v -480 h 40 z" fill="black" transform="rotate(45)"></path>
+</svg>

@@ -1,0 +1,36 @@
+:host.overlay-modal-panel {
+    display: block;
+    background: white;
+    max-width: 80vw;
+    max-height: 100%;
+    width: 75%;
+    box-sizing: border-box;
+    z-index: 1000;
+    padding: 24px;
+    border-radius: 4px;
+    overflow: auto;
+    outline: 0;
+    color: black;
+    box-shadow: 0 11px 15px -7px rgba(0,0,0,.2), 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12);
+    pointer-events: auto;
+
+    .dialog-title {
+        display: flex;
+        margin-bottom: 24px;
+
+        div:first-child {
+            flex: 1 0 1px; 
+        }
+
+        div:last-child {
+            flex: 0 0 20px; 
+        }
+
+        .close {
+            width: 20px;
+            height: 20px;
+            background: no-repeat url("../../assets/close.svg");
+        }
+    }
+}
+
