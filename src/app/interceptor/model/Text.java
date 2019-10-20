@@ -46,3 +46,14 @@ public class Text implements ParagraphElement {
         }
     }
 }
+
+// Attention use a method name so that the bean name is "messageSource"
+@Bean
+public ResourceBundleMessageSource messageSource() {
+    ResourceBundleMessageSource rslt = new ResourceBundleMessageSource();
+    rslt.setBasename("messages");
+    return rslt;
+}
+
+@Autowired
+private MessageSource messageSource;
