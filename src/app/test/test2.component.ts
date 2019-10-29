@@ -7,6 +7,8 @@ import { WizardStepComponent } from './wizard.step.component';
     styleUrls: ['./test2.component.scss']
   })
 export class Test2Component extends WizardStepComponent implements OnInit {
+  public isButtonDisabled = false;
+
   constructor() {
     super();
     console.log('#### TEST2 constructor');
@@ -14,7 +16,7 @@ export class Test2Component extends WizardStepComponent implements OnInit {
 
   ngOnInit() {
     console.log('#### TEST2 ngOnInit');
-    this.onStepperButtonsEnablingEvent.emit(true);
+//    this.onStepperButtonsEnablingEvent.emit(true);
   }
 
   public onPreviousStepClicked() {
@@ -24,4 +26,13 @@ export class Test2Component extends WizardStepComponent implements OnInit {
   public onNextStepClicked() {
     return true;
   }
+
+  public goPreviousStep() {
+    this.onPreviousButtonEvent.emit();
+  }
+
+  public goNextStep() {
+    this.onNextButtonEvent.emit();
+  }
+
 }

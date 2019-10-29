@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 
 @Component({
@@ -6,6 +6,10 @@ import { Component } from '@angular/core';
     templateUrl: './interceptor.component.html',
     styleUrls: ['./interceptor.component.scss']
 })
-export class InterceptorComponent {
+export class InterceptorComponent implements OnInit {
 
+
+    ngOnInit() {
+        
+    }
 }

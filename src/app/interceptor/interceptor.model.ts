@@ -1,5 +1,8 @@
 import { parse } from 'url';
-import { Renderer2, ComponentRef } from '@angular/core';
+import { Renderer2, ComponentRef, Type } from '@angular/core';
+import { TestComponent } from '../test/test.component';
+import { RadioButtonWrapperComponent } from '../test/radiobutton.wrapper.component';
+import { ParagraphWrapperComponent } from '../test/paragraph.wrapper.component';
 
 
 export interface InterceptorContent {
@@ -9,83 +12,80 @@ export interface InterceptorContent {
     actions: Array<any>;
 }
 
+function addParagraphComponent(interceptorPage: TestComponent): ComponentRef<ParagraphWrapperComponent> {
+    const compFactory = interceptorPage.componentFactoryResolver.resolveComponentFactory(ParagraphWrapperComponent);
+    const compRef = interceptorPage.contentRoot.createComponent(compFactory, null, interceptorPage.dinjector);
+    return compRef;
+}
+
 abstract class ElementParser {
-    abstract parse(element: any, rootElem: HTMLElement, renderer2: Renderer2, lastParser: ElementParser, componentRef: ComponentRef<any>);
+    abstract parse(element: any, id: string, lastComponentRef: ComponentRef<any>, interceptorPage: TestComponent): ComponentRef<any>;
 }
 
-abstract class PParentElementParser extends ElementParser {
-    pElem: HTMLParagraphElement;
-
-    createPElement(rootElem: HTMLElement, renderer2: Renderer2): HTMLParagraphElement {
-        const pElem = renderer2.createElement('p') as HTMLParagraphElement;
-        rootElem.appendChild(pElem);
-        return pElem;
-    }
-
-}
-
-class TextElementParser extends PParentElementParser {
-    public isBoldStyle: boolean;
-
-    parse(element: any, rootElem: HTMLElement, renderer2: Renderer2, lastParser: ElementParser, componentRef: ComponentRef<any>) {
+class TextElementParser extends ElementParser {
+    parse(element: any, id: string, lastComponentRef: ComponentRef<any>, interceptorPage: TestComponent): ComponentRef<any> {
         const message = element['message'];
-        this.isBoldStyle = element['boldStyle'];
+        const isBoldStyle = element['boldStyle'];
 
-        if (lastParser != null && (!((!this.isBoldStyle) && lastParser instanceof TextElementParser && (!(lastParser as TextElementParser).isBoldStyle)))) {
-            this.pElem = (lastParser as TextElementParser).pElem;
+        let componentRef: ComponentRef<ParagraphWrapperComponent>;
+
+        if ((lastComponentRef != null) && (lastComponentRef.instance instanceof ParagraphWrapperComponent && (isBoldStyle !== ((lastComponentRef.instance as ParagraphWrapperComponent).isBoldStyle)))) {
+            componentRef = lastComponentRef as ComponentRef<ParagraphWrapperComponent>;
         } else {
-            this.pElem = this.createPElement(rootElem, renderer2);
+            componentRef = addParagraphComponent(interceptorPage);
         }
 
-        const textNode = renderer2.createText(message);
-        if (this.isBoldStyle) {
-            this.pElem.appendChild(renderer2.createElement('b') as HTMLElement).appendChild(textNode);
+        const textNode = interceptorPage.renderer2.createText(message);
+        if (isBoldStyle) {
+            componentRef.instance.addParagraphElement(interceptorPage.renderer2.createElement('b') as HTMLElement, true).appendChild(textNode);
         } else {
-            this.pElem.appendChild(textNode);
+            componentRef.instance.addParagraphElement(textNode, false);
         }
+        return componentRef;
     }
 
 }
 
-class LinkElementParser extends PParentElementParser {
-    parse(element: any, rootElem: HTMLElement, renderer2: Renderer2, lastParser: ElementParser, componentRef: ComponentRef<any>) {
+class LinkElementParser extends ElementParser {
+    parse(element: any, id: string, lastComponentRef: ComponentRef<any>, interceptorPage: TestComponent): ComponentRef<any> {
         const label = element['label'];
         const action = element['action'];
 
-        if ((lastParser != null) && (lastParser instanceof PParentElementParser)) {
-            this.pElem = (lastParser as PParentElementParser).pElem;
+        let componentRef: ComponentRef<ParagraphWrapperComponent>;
+        if ((lastComponentRef != null) && (lastComponentRef.instance instanceof ParagraphWrapperComponent)) {
+            componentRef = lastComponentRef as ComponentRef<ParagraphWrapperComponent>;
         } else {
-            this.pElem = this.createPElement(rootElem, renderer2);
+            componentRef = addParagraphComponent(interceptorPage);
         }
 
-        const anchorElem = renderer2.createElement('a') as HTMLAnchorElement;
-        anchorElem.appendChild(renderer2.createText(label));
+        const anchorElem = interceptorPage.renderer2.createElement('a') as HTMLAnchorElement;
+        anchorElem.appendChild(interceptorPage.renderer2.createText(label));
         anchorElem.href = '#';
-        anchorElem.addEventListener('click', () => {
-            componentRef.instance.routeTo(action);
+        anchorElem.addEventListener('click', (event) => {
+            console.log('#### Link click');
+            interceptorPage.setSyncAction(action);
+            event.preventDefault();
         });
-        this.pElem.appendChild(anchorElem);
+        componentRef.instance.addParagraphElement(anchorElem, false);
+        return componentRef;
     }
 }
 
 class RadioButtonGroupElementParser extends ElementParser {
-    parse(elements: any, rootElem: HTMLElement, renderer2: Renderer2, lastParser: ElementParser, componentRef: ComponentRef<any>) {
-        const id = rootElem.childElementCount;
-        elements.forEach( (element, index) => {
-            const label = element['label'];
-            const action = element['action'];
+    parse(elements: any, id: string, lastComponentRef: ComponentRef<any>, interceptorPage: TestComponent): ComponentRef<any> {
+        const compFactory = interceptorPage.componentFactoryResolver.resolveComponentFactory(RadioButtonWrapperComponent);
+        const compRef = interceptorPage.contentRoot.createComponent(compFactory, null, interceptorPage.dinjector);
 
-            const divElem = rootElem.appendChild(renderer2.createElement('div') as HTMLDivElement);
-            const inputElem = divElem.appendChild(renderer2.createElement('input') as HTMLInputElement);
-            inputElem.type = 'radio';
-            inputElem.name = '' + id;
-            inputElem.id = '' + id + '_' + index;
-            inputElem.value = action;
-            const labelElem = renderer2.createElement('label') as HTMLLabelElement;
-            labelElem.htmlFor = inputElem.id;
-            labelElem.appendChild(renderer2.createText(label));
-            divElem.appendChild(labelElem);
+        const data = elements.map( (element) => {
+            return {label: element['label'], action: element['action']};
         });
+        compRef.instance.groupName = id;
+        compRef.instance.data = data;
+        compRef.instance.choice = data[0].action;
+        compRef.instance.choiceChange.subscribe( (newAction) => {
+            interceptorPage.setAsyncAction(newAction);
+        });
+        return compRef;
     }
 }
 
@@ -96,20 +96,18 @@ export class Parser {
         ['radioButtonGroup', RadioButtonGroupElementParser]
     ]);
 
-    public parse(content: InterceptorContent, componentRef: ComponentRef<any>, renderer2: Renderer2): HTMLElement {
-        const rootElem = renderer2.createElement('div') as HTMLDivElement;
-        let lastItemParser: ElementParser = null;
+    public parse(content: InterceptorContent, interceptorPage: TestComponent, renderer2: Renderer2): void {
+        let lastComponentRef: ComponentRef<any>;
+        let id = 0;
 
         content.content.forEach(contentItem => {
             for (const entry of this.MODEL.entries()) {
                 const val = contentItem[entry[0]];
                 if (val != null) {
                     const itemParser = new entry[1](val) as ElementParser;
-                    itemParser.parse(val, rootElem, renderer2, lastItemParser, componentRef);
-                    lastItemParser = itemParser;
+                    lastComponentRef = itemParser.parse(val, '' + (id++), lastComponentRef, interceptorPage);
                 }
             }
         });
-        return rootElem;
     }
 }

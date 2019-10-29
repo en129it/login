@@ -1,1 +1,12 @@
+<div>@@@@@@@@@@@@@@@@@@@</div>
 <div style="background-color: green;">This is a content of step2</div>
+
+<div class="button-container">
+    <div class="navig-button">
+        <button [disabled]="isButtonDisabled" (click)="goPreviousStep()">Previous</button>
+    </div>
+    <div class="navig-button">
+        <button [disabled]="isButtonDisabled" (click)="goNextStep()">Next</button>
+    </div>
+</div>
+<div style="clear: both;"></div>

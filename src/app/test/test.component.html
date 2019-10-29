@@ -1,1 +1,15 @@
 <div style="background-color: red;">This is a content</div>
+
+<button (click)="routeToTest2()">Route to test2</button>
+
+<div #contentroot>
+    <ng-container #contentroot2>
+    </ng-container>    
+</div>
+
+<div class="button-container">
+    <div class="navig-button">
+        <button [disabled]="isButtonDisabled" (click)="goNextStep()">Next</button>
+    </div>
+</div>
+<div style="clear: both;"></div>

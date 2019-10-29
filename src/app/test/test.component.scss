@@ -1,0 +1,14 @@
+
+.button-container {
+    float: right;
+
+    .navig-button {
+        min-width: 150px;
+        padding: 20px 0px 0px 20px;
+        display: inline-block;
+
+        button {
+            width: 100%;
+        }
+    }
+}

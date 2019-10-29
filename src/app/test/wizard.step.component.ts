@@ -14,6 +14,10 @@ export abstract class WizardStepComponent {
      */
     @Output() onStepperButtonsEnablingEvent = new EventEmitter<boolean>();
 
+    @Output() onPreviousButtonEvent = new EventEmitter<void>();
+
+    @Output() onNextButtonEvent = new EventEmitter<void>();
+
     /**
      * Method invoked by StepperComponent when the user clicks onto the Previous step button.
      * Typically implementation of this method will perform some operations before the display

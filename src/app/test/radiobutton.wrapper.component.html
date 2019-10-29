@@ -1,0 +1,5 @@
+<div id="root">
+    <div *ngFor="let item of data; let i=index">
+        <input type="radio" [value]="item.action" [name]="groupName" [id]="groupName + i" [(ngModel)]="choice"><label [for]="groupName + i">{{item.label}}</label>
+    </div>
+</div>
