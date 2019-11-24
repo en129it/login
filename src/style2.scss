@@ -1,0 +1,245 @@
+$content-max-width: 660px;
+$margin-hor: 108px;
+$margin: 0px $margin-hor;
+$form-max-width: 300px;
+$form-copy-max-width: 400px;
+$scrollbar-width: 20px;
+
+$padding-40: 40px;
+$step-width: 200px;
+
+
+body {
+}
+
+.header-root {
+	padding: $margin;
+	box-sizing: content-box;
+	min-width: $content-max-width;
+
+	// If the anchor must always be displayed at the right of the text then use flex layout
+	// the problem is that the h1 and anchor text will not be vertical aligned on a common baseline
+	.title {
+		display: inline-block;
+		position: relative;
+		margin: 72px 0px 20px 0px;
+		
+		h1 {
+			margin-block-start: 0;
+			margin-block-end: 0;
+			font-size: 30px;
+			display: inline-block;
+			padding-left: 100px;
+			position: relative;
+			transform: translate(-100px, 0px);
+		}
+		
+		a {
+			display: inline-block;
+		}
+		
+		
+	}
+	
+	.stepper {
+		width: $content-max-width;
+		margin: 20px 0px 20px 0px;
+	}
+}
+
+.navig-buttons {
+	text-align: right;
+	position: relative;
+	margin-top: 36px;
+
+	button:first-child {
+		margin-left: 12px;
+		float: right;
+		position: relative;
+	}
+}
+
+.body-root-select {
+	margin: $margin;
+	
+	h2 {
+		margin: 40px 0px 12px 0px;
+	}
+	
+	.t-text-form {
+		max-width: $content-max-width;
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+		
+		.t-text {
+			flex: 1 0 auto;
+			
+			p:first-of-type {
+				 margin-top: 0px;
+			}
+			
+			div.radio-group {
+				margin: 24px 0px;
+				div.radio-item {
+					margin: 16px 0px;
+				}
+			}
+		}
+		
+		.t-form {
+			flex: 0 0 $form-max-width;
+			text-align: right;
+			
+			img {
+				margin: 64px 0px 36px 0px;
+			}
+			
+		}
+	}
+}
+
+@mixin body-root-test-import-media($form-max-width) {
+	.t-text-form {
+		display: block;
+		position: relative;
+		max-width: $form-max-width + (2*$step-width) + (2*$padding-40) + $scrollbar-width;
+		
+		.t-step3 {
+			width: $form-max-width;
+		}		
+	}
+
+	@media (min-width: (2*$margin-hor) + $form-max-width + (2*$step-width) + (2*$padding-40) + $scrollbar-width) {
+		.t-text-form {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: flex-start;
+			
+			.t-step2-label {
+				p {
+					margin-top: 0px;
+				}
+			}
+			
+			.t-step3-label {
+				flex: 0 0 $form-max-width;
+				position: static;
+				display: block;
+			}
+			
+			.t-step3 {
+				flex: 0 0 $form-max-width;
+				position: static;
+			
+				.t-step3-label {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
+.body-root-test, .body-root-import {
+	margin: $margin;
+	
+	h2 {
+		margin: 40px 0px 12px 0px;
+	}
+	
+	.t-text-form {
+		display: block;
+		position: relative;
+		
+		.t-step1-label, .t-step2-label, .t-step3-label {
+			p {
+				display: inline-block;
+				width: $step-width;
+			}
+		}
+
+		.t-step1-label, .t-step3-label {
+			p {
+				margin-top: 0px;
+			}
+		}
+		
+		.t-step1-label, .t-step1, .t-step2-label, .t-step2 {
+			flex: 0 0 $step-width + $padding-40;
+			width: $step-width + $padding-40;
+		}
+		
+		.t-step1-label {
+			order: 1;
+		}
+	
+		.t-step1 {
+			order: 4;
+		}
+	
+		.t-step2-label {
+			order: 2;
+		}
+	
+		.t-step2 {
+			order: 5;
+		}
+		
+		.t-step3-label {
+			left: $step-width + $padding-40;
+			display: none;
+			order: 3;
+			width: $form-max-width;
+			
+			p {
+				width: 100%;
+			}
+		}
+		
+		.t-step3 {
+			position: absolute;
+			left: $step-width + $padding-40;
+			top: 0px;
+			order: 6;
+			
+			.form {
+				width: 100%;
+				
+				label {
+					display: block;
+				}
+				input {
+					width: 100%;
+					box-sizing: border-box;
+				}
+			}
+			
+			.t-step3-label {
+				display: block;
+			}
+		}		
+	}
+}
+
+.body-root-test {
+	@include body-root-test-import-media($form-max-width);
+}
+
+.body-root-import {
+	.t-step3 .form {
+		background-color: yellow;
+		
+		.input {
+			display: inline-block;
+			width: $form-max-width;
+			height: 100px;
+		}
+		.copy {
+			margin-left: 40px;
+			display: inline-block;
+		}
+	}
+
+	@include body-root-test-import-media($form-copy-max-width);
+	
+}
