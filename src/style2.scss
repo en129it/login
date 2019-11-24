@@ -9,13 +9,13 @@ $padding-40: 40px;
 $step-width: 200px;
 
 
-body {
+body, html {
+	width: 100%; padding: 0; margin: 0;
 }
 
 .header-root {
 	padding: $margin;
 	box-sizing: content-box;
-	min-width: $content-max-width;
 
 	// If the anchor must always be displayed at the right of the text then use flex layout
 	// the problem is that the h1 and anchor text will not be vertical aligned on a common baseline
@@ -37,8 +37,6 @@ body {
 		a {
 			display: inline-block;
 		}
-		
-		
 	}
 	
 	.stepper {
@@ -67,7 +65,7 @@ body {
 	}
 	
 	.t-text-form {
-		max-width: $content-max-width;
+		width: $content-max-width;
 		display: flex;
 		flex-wrap: nowrap;
 		justify-content: space-between;
@@ -99,48 +97,12 @@ body {
 	}
 }
 
-@mixin body-root-test-import-media($form-max-width) {
-	.t-text-form {
-		display: block;
-		position: relative;
-		max-width: $form-max-width + (2*$step-width) + (2*$padding-40) + $scrollbar-width;
-		
-		.t-step3 {
-			width: $form-max-width;
-		}		
-	}
 
-	@media (min-width: (2*$margin-hor) + $form-max-width + (2*$step-width) + (2*$padding-40) + $scrollbar-width) {
-		.t-text-form {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: flex-start;
-			
-			.t-step2-label {
-				p {
-					margin-top: 0px;
-				}
-			}
-			
-			.t-step3-label {
-				flex: 0 0 $form-max-width;
-				position: static;
-				display: block;
-			}
-			
-			.t-step3 {
-				flex: 0 0 $form-max-width;
-				position: static;
-			
-				.t-step3-label {
-					display: none;
-				}
-			}
-		}
-	}
-}
 
-.body-root-test, .body-root-import {
+
+
+
+.body-root-test {
 	margin: $margin;
 	
 	h2 {
@@ -148,8 +110,105 @@ body {
 	}
 	
 	.t-text-form {
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: flex-start;
+		
+		.t-text {
+			display: block;
+			flex: 0 0 auto;
+			
+			.t-step1-label, .t-step2-label {
+				p {
+					display: inline-block;
+					width: $step-width;
+				}
+			}
+
+			.t-step1-label p {
+				margin-top: 0px;
+			}
+			
+			.t-step1-label, .t-step1, .t-step2-label, .t-step2 {
+				width: $step-width + $padding-40;
+			}
+			
+			.t-step1-label {
+				order: 1;
+			}
+		
+			.t-step1 {
+				order: 3;
+			}
+		
+			.t-step2-label {
+				order: 2;
+			}
+		
+			.t-step2 {
+				order: 4;
+			}
+		}
+		
+		.t-form {
+			width: $form-max-width;
+			flex: 0 0 $form-max-width;
+			
+			.form {
+				width: 100%;
+				
+				label {
+					display: block;
+				}
+				input {
+					width: 100%;
+					box-sizing: border-box;
+				}
+			}
+		}		
+	}
+
+	@media (min-width: (2*$margin-hor) + $form-max-width + (2*$step-width) + (2*$padding-40) + $scrollbar-width) {
+		.t-text-form .t-text {
+			display: flex;
+			flex-wrap: wrap;
+			max-width: (2*$step-width) + (2*$padding-40);
+	
+			.t-step1-label, .t-step1, .t-step2-label, .t-step2 {
+				flex: 0 0 $step-width + $padding-40;
+			}
+			
+			.t-step2-label p {
+					margin-top: 0px;
+			}
+		}
+	}
+	
+}
+
+.body-root-import {
+	margin: $margin;
+	
+	h2 {
+		margin: 40px 0px 12px 0px;
+	}
+
+	.t-step3 .form {
+		.input {
+			display: inline-block;
+			width: $form-max-width;
+			height: 100px;
+		}
+		.copy {
+			margin-left: 40px;
+			display: inline-block;
+		}
+	}
+	
+	.t-text-form {
 		display: block;
 		position: relative;
+		max-width: $form-copy-max-width + (2*$step-width) + (2*$padding-40) + $scrollbar-width;
 		
 		.t-step1-label, .t-step2-label, .t-step3-label {
 			p {
@@ -158,14 +217,11 @@ body {
 			}
 		}
 
-		.t-step1-label, .t-step3-label {
-			p {
-				margin-top: 0px;
-			}
+		.t-step1-label, .t-step3-label p {
+			margin-top: 0px;
 		}
 		
 		.t-step1-label, .t-step1, .t-step2-label, .t-step2 {
-			flex: 0 0 $step-width + $padding-40;
 			width: $step-width + $padding-40;
 		}
 		
@@ -186,7 +242,6 @@ body {
 		}
 		
 		.t-step3-label {
-			left: $step-width + $padding-40;
 			display: none;
 			order: 3;
 			width: $form-max-width;
@@ -197,6 +252,7 @@ body {
 		}
 		
 		.t-step3 {
+			width: $form-copy-max-width;
 			position: absolute;
 			left: $step-width + $padding-40;
 			top: 0px;
@@ -219,27 +275,38 @@ body {
 			}
 		}		
 	}
-}
 
-.body-root-test {
-	@include body-root-test-import-media($form-max-width);
-}
-
-.body-root-import {
-	.t-step3 .form {
-		background-color: yellow;
+	@media (min-width: (2*$margin-hor) + $form-copy-max-width + (2*$step-width) + (2*$padding-40) + $scrollbar-width) {
+		.t-text-form {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: flex-start;
 		
-		.input {
-			display: inline-block;
-			width: $form-max-width;
-			height: 100px;
-		}
-		.copy {
-			margin-left: 40px;
-			display: inline-block;
+			.t-step1-label, .t-step1, .t-step2-label, .t-step2 {
+				flex: 0 0 $step-width + $padding-40;
+			}
+			
+			.t-step2-label {
+				p {
+					margin-top: 0px;
+				}
+			}
+			
+			.t-step3-label {
+				flex: 0 0 $form-copy-max-width;
+				position: static;
+				display: block;
+			}
+			
+			.t-step3 {
+				flex: 0 0 $form-copy-max-width;
+				position: static;
+			
+				.t-step3-label {
+					display: none;
+				}
+			}
 		}
 	}
-
-	@include body-root-test-import-media($form-copy-max-width);
 	
 }
